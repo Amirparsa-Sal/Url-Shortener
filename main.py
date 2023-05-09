@@ -30,16 +30,22 @@ API_DOMAIN = os.getenv('API_DOMAIN', 'https://gotiny.cc')
 
 REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
 REDIS_PORT = int(os.getenv('REDIS_PORT', 6379))
-r = redis.Redis(host='localhost', port=6379, decode_responses=True)
+REDIS_CACHE_MINUTES = float(os.getenv('REDIS_CACHE_MINUTES', 5))
+redis = redis.Redis(host='localhost', port=6379, decode_responses=True)
 
 app = FastAPI()
 
 @app.post('/shortner')
 def shortner_endpoint(data: UrlShortnerSerializer) -> ShortnerResultSerializer:
-    _, result = shorten_url(f'{API_DOMAIN}/{API_ENDPOINT}', data.url)
-    result = json.loads(result)
-    short_url = f"{API_DOMAIN}/{result[0]['code']}"
-    return ShortnerResultSerializer(long_url=data.url, short_url=short_url, is_cached=False, host_name=socket.gethostname())
+    short_url = redis.get(data.url)
+    is_cached = short_url != None
+    if not is_cached:
+        _, result = shorten_url(f'{API_DOMAIN}/{API_ENDPOINT}', data.url)
+        result = json.loads(result)
+        short_url = f"{API_DOMAIN}/{result[0]['code']}"
+        redis.set(data.url, short_url, ex=int(REDIS_CACHE_MINUTES*60))
+    return ShortnerResultSerializer(long_url=data.url, short_url=short_url, is_cached=is_cached, host_name=socket.gethostname())
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=PORT)
