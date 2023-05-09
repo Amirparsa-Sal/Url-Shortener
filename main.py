@@ -3,12 +3,15 @@ import os
 from dotenv import load_dotenv
 import requests
 import uvicorn
+import socket
+import redis
 import json
+from serializers import UrlShortnerSerializer, ShortnerResultSerializer
 
-def shorten_url(api_key, api_endpoint, url: str):
-    payload = url.encode("utf-8")
-    headers= {"apikey": api_key}
-    response = requests.request("POST", api_endpoint, headers=headers, data = payload)
+def shorten_url(api_url, url: str):
+    payload = {'input': url}
+    headers={"Content-Type": "application/json"}
+    response = requests.request(method="POST", url=api_url, headers=headers, json=payload)
     status_code = response.status_code
     result = response.text
     return status_code, result
@@ -22,15 +25,21 @@ if not API_KEY:
 
 PORT = int(os.getenv('PORT', 8000))
 
-ENDPOINT = os.getenv('ENDPOINT', 'https://api.apilayer.com/short_url/hash')
+API_ENDPOINT = os.getenv('API_ENDPOINT', 'api')
+API_DOMAIN = os.getenv('API_DOMAIN', 'https://gotiny.cc')
 
-    
+REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
+REDIS_PORT = int(os.getenv('REDIS_PORT', 6379))
+r = redis.Redis(host='localhost', port=6379, decode_responses=True)
+
 app = FastAPI()
 
-@app.get('/')
-async def root():
-    _, result = shorten_url(API_KEY, ENDPOINT, 'www.aut.ac.ir')
-    return json.loads(result)
+@app.post('/shortner')
+def shortner_endpoint(data: UrlShortnerSerializer) -> ShortnerResultSerializer:
+    _, result = shorten_url(f'{API_DOMAIN}/{API_ENDPOINT}', data.url)
+    result = json.loads(result)
+    short_url = f"{API_DOMAIN}/{result[0]['code']}"
+    return ShortnerResultSerializer(long_url=data.url, short_url=short_url, is_cached=False, host_name=socket.gethostname())
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=PORT)
