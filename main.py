@@ -31,7 +31,7 @@ API_DOMAIN = os.getenv('API_DOMAIN', 'https://gotiny.cc')
 REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
 REDIS_PORT = int(os.getenv('REDIS_PORT', 6379))
 REDIS_CACHE_MINUTES = float(os.getenv('REDIS_CACHE_MINUTES', 5))
-redis = redis.Redis(host='localhost', port=6379, decode_responses=True)
+redis = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, decode_responses=True)
 
 app = FastAPI()
 
