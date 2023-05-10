@@ -18,7 +18,17 @@ spec:
 
     spec:
       containers:
-      - name: url-shornter-redis
-        image: redis:alpine
+      - image: redis:alpine
+        name: url-shornter-redis
+        volumeMounts:
+        - name: redis-data
+          mountPath: /data
         ports:
         - containerPort: 6379
+          protocol: TCP
+          
+      volumes:
+      - name: redis-data
+        persistentVolumeClaim:
+          claimName: redis-pvc
+        
