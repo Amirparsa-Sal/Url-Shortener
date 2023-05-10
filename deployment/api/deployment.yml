@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+  name: url-shortner-api
+
+  labels:
+    app: api
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: api
+
+  template:
+    metadata:
+      labels:
+        app: api
+
+    spec:
+      containers:
+      - name: url-shornter-api
+        image: amirparsa/url_shortner
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - configMapRef:
+            name: url-shortner

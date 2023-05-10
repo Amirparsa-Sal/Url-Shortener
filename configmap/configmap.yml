@@ -1,0 +1,17 @@
+apiVersion: v1
+
+kind: ConfigMap
+
+metadata:
+  name: url-shortner
+
+data:
+  PORT: '8000'
+
+  API_KEY: EMdLf9mPeQW23ywXvHfrCdAHiyS9nZez
+  API_ENDPOINT: api
+  API_DOMAIN: https://gotiny.cc
+
+  REDIS_HOST: redis
+  REDIS_PORT: '6379'
+  REDIS_CACHE_MINUTES: '1'

@@ -1,0 +1,15 @@
+apiVersion: v1
+
+kind: Service
+
+metadata:
+  name: url-shortner-api
+
+spec:
+  selector:
+    app: api
+
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
