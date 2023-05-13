@@ -36,10 +36,11 @@ To test the service, you should first create a pod for my simple curl docker ima
 kubectl run curl -it --image amirparsa/simple-curl
 ```
 
-In the opened prompt you can send an HTTP request to the server. Here is a sample request for `www.google.com`:
+In the opened prompt you can send an HTTP request to the server. Here is a sample request for `www.google.com`. Please replace 
+`<api_service_ip>` with IP of the created API service:
 
 ```bash
-curl --location -s --request POST '10.101.247.133:8000/shortner' \                                                                                     ─╯
+curl --location -s --request POST '<api_service_ip>:8000/shortner' \                                                                                     ─╯
 --header 'Content-Type: application/json' \
 --data-raw '{
     "url": "www.google.com"
