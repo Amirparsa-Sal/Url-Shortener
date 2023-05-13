@@ -19,15 +19,15 @@ kubectl apply -f pvclaim/redis/pvclaim.yml
  Now you can create a deployment and a service for Redis:
 
 ```bash
-kubectl apply -f deployment/redis/deployment.yaml
-kubectl apply -f service/redis/service.yaml
+kubectl apply -f deployment/redis/deployment.aml
+kubectl apply -f service/redis/service.yml
 ```
 
 Finally, you can create a deployment and a service for server:
 
 ```bash
-kubectl apply -f deployment/api/deployment.yaml
-kubectl apply -f service/api/service.yaml
+kubectl apply -f deployment/api/deployment.yml
+kubectl apply -f service/api/service.yml
 ```
 
 To test the service, you should first create a pod for my simple curl docker image:
